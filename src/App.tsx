@@ -89,57 +89,77 @@ const App: React.FC = (): JSX.Element => {
   const animationIcons = () => {
     if (topTextRef.current && middleTextRef.current) {
       const positionFromTop = topTextRef.current?.getBoundingClientRect().top;
+      const topTextHeight = topTextRef.current?.offsetHeight;
+      const middleTextHeight = middleTextRef.current?.offsetHeight;
+      const duration = topTextHeight + middleTextHeight;
       let animationCurrentTime = -positionFromTop;
-      const duration =
-        topTextRef.current.offsetHeight + middleTextRef.current.offsetHeight;
-
-      const transformIcon = (
-        rotate: string,
-        opositeRotate: string,
-        scale: string
-      ) => ({
-        transform: `rotate(${rotate}deg) translateX(200px) rotate(${opositeRotate}deg) scale(${scale})`,
-      });
 
       if (-positionFromTop < 0) {
         animationCurrentTime = 0;
       }
+
       if (-positionFromTop > duration) {
         animationCurrentTime = duration;
       }
+      console.log(animationCurrentTime);
+      const topAnimation = topRef?.current?.animate(
+        [
+          {
+            transform:
+              "rotate(-120deg) translateX(200px) rotate(120deg) scale(1)",
+          },
+          {
+            transform:
+              "rotate(0deg) translateX(200px) rotate(0deg) scale(1.354)",
+          },
+          {
+            transform:
+              "rotate(120deg) translateX(200px) rotate(-120deg) scale(1)",
+          },
+        ],
+        { duration, fill: "both" }
+      );
+      const middleAnimation = middleRef?.current?.animate(
+        [
+          {
+            transform:
+              "rotate(0deg) translateX(200px) rotate(0deg) scale(1.354)",
+          },
+          {
+            transform:
+              "rotate(120deg) translateX(200px) rotate(-120deg) scale(1)",
+          },
+          {
+            transform:
+              "rotate(240deg) translateX(200px) rotate(-240deg) scale(1)",
+          },
+        ],
+        { duration, fill: "both" }
+      );
+      const bottomAnimation = bottomRef?.current?.animate(
+        [
+          {
+            transform:
+              "rotate(-240deg) translateX(200px) rotate(240deg) scale(1)",
+          },
+          {
+            transform:
+              "rotate(-120deg) translateX(200px) rotate(120deg) scale(1)",
+          },
+          {
+            transform:
+              "rotate(0deg) translateX(200px) rotate(0deg) scale(1.354)",
+          },
+        ],
+        { duration, fill: "both" }
+      );
+      topAnimation?.pause();
+      middleAnimation?.pause();
+      bottomAnimation?.pause();
 
-      const animationIconsProps = [
-        {
-          ref: topRef.current,
-          animation: [
-            transformIcon("-120", "120", "1"),
-            transformIcon("0", "0", "1.354"),
-            transformIcon("120", "-120", "1"),
-          ],
-        },
-        {
-          ref: middleRef.current,
-          animation: [
-            transformIcon("0", "0", "1.354"),
-            transformIcon("120", "-120", "1"),
-            transformIcon("240", "-240", "1"),
-          ],
-        },
-        {
-          ref: bottomRef.current,
-          animation: [
-            transformIcon("-240", "240", "1"),
-            transformIcon("-120", "120", "1"),
-            transformIcon("0", "0", "1.354"),
-          ],
-        },
-      ];
-
-      animationIconsProps.forEach(({ ref, animation }) => {
-        const animationIcons = ref?.animate(animation, { duration });
-        animationIcons?.pause();
-        animationIcons!.currentTime = animationCurrentTime;
-      });
+      topAnimation!.currentTime = animationCurrentTime;
+      middleAnimation!.currentTime = animationCurrentTime;
+      bottomAnimation!.currentTime = animationCurrentTime;
     }
   };
 
